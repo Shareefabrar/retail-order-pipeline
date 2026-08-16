@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: batch-job
+  namespace: retail
+spec:
+  # 2 AM every day. For local testing you don't have to wait for this —
+  # see the README for how to trigger a run manually with `kubectl create
+  # job --from=cronjob/batch-job`.
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: batch-job
+              image: retail/batch-job:latest
+              imagePullPolicy: Never  # see order-generator.yaml comment — same reason
+              env:
+                - name: JDBC_URL
+                  value: "jdbc:postgresql://postgres:5432/retail"
+                - name: JDBC_USER
+                  value: postgres
+                - name: JDBC_PASSWORD
+                  value: postgres
+              # No --date argument here on purpose: DailyReconciliation.scala
+              # defaults to LocalDate.now() when --date isn't passed, which
+              # is exactly what a nightly scheduled job should do — process
+              # "today" (or really, whatever date the container's clock
+              # reads when it runs).
+          restartPolicy: OnFailure

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-generator
+  namespace: retail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-generator
+  template:
+    metadata:
+      labels:
+        app: order-generator
+    spec:
+      containers:
+        - name: order-generator
+          image: retail/order-generator:latest
+          # CRITICAL: without this, Kubernetes tries to pull the image from
+          # Docker Hub (since it doesn't know this was loaded locally via
+          # `kind load docker-image`) and fails with ErrImagePull. This is
+          # the single most common gotcha with kind + locally-built images.
+          imagePullPolicy: Never
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka:9092"

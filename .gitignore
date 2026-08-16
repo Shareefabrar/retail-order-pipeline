@@ -1,0 +1,9 @@
+target/
+*.class
+.idea/
+*.log
+.DS_Store
+*.iml
+metastore_db/
+derby.log
+*Zone.identifier

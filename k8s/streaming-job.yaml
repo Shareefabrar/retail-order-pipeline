@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streaming-job
+  namespace: retail
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streaming-job
+  template:
+    metadata:
+      labels:
+        app: streaming-job
+    spec:
+      containers:
+        - name: streaming-job
+          image: retail/streaming-job:latest
+          imagePullPolicy: Never  # see order-generator.yaml comment — same reason
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka:9092"
+            - name: JDBC_URL
+              value: "jdbc:postgresql://postgres:5432/retail"
+            - name: JDBC_USER
+              value: postgres
+            - name: JDBC_PASSWORD
+              value: postgres
