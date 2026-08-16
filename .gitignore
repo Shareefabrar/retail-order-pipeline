@@ -6,4 +6,4 @@ target/
 *.iml
 metastore_db/
 derby.log
-*Zone.identifier
+*Zone.identifier*Zone.Identifier*
